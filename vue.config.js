@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: '/greedy-hunter/',
   transpileDependencies: [
     'vuetify',
   ],
