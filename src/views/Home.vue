@@ -4,7 +4,6 @@
       <v-col cols="12" md="3">
         <v-card flat color="transparent" class="mesh">
           <mesh id="mesh" />
-          <!-- <img src="@/assets/img/abstract/mesh.svg"> -->
         </v-card>
       </v-col>
       <v-col cols="12" md="5" class="d-flex align-center flex-column">
@@ -14,18 +13,17 @@
           The aim is to eat all the food in record time Confiure your game grid
           below 👇🏼
         </h4>
-        <form class="mt-7 d-flex flex-column align-center">
+        <form class="mt-7 d-flex flex-column align-center" @submit="(e) => e.preventDefault()">
           <div class="d-flex justify-center">
             <label>Game grid </label>
             <input type="number" value="10" width="161px" />
           </div>
-          <button class="mt-7">Start Game</button>
+          <button class="mt-7" @click="$emit('route', 'game')">Start Game</button>
         </form>
       </v-col>
       <v-col cols="12" md="3">
         <v-card flat color="transparent" class="mesh">
           <mesh id="mesh" />
-          <!-- <img src="@/assets/img/abstract/mesh.svg"> -->
         </v-card>
       </v-col>
     </v-row>
