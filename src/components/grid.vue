@@ -28,7 +28,11 @@ export default class Grid extends Vue {
 
   probability = 0.2;
 
+  totalMoves = 0
+
   boardItems: BoardItem[] = [];
+
+  availableFood = 0;
 
   mounted(): void {
     this.populateBoard(this.value);
@@ -37,6 +41,11 @@ export default class Grid extends Vue {
 
   updateScore(): void {
     this.$emit('update:score');
+  }
+
+  updateMoves(): void {
+    this.totalMoves += 1;
+    this.$emit('update:moves');
   }
 
   populateBoard(rows: number, cola?: number): void {
@@ -60,6 +69,7 @@ export default class Grid extends Vue {
         } else if (this.randomBoolean()) {
           Grid.appendElement(col, this.food);
           itemObj.hasFood = true;
+          this.availableFood += 1;
         }
         row.appendChild(col);
         id += 1;
@@ -117,18 +127,23 @@ export default class Grid extends Vue {
   }
 
   move(newPosition: number): void {
-    const playerCol = document.getElementById(`${this.playerPosition}`);
-    const newPlayerCol = document.getElementById(`${newPosition}`);
-    if (newPlayerCol) {
-      newPlayerCol.innerHTML = '';
-      Grid.appendElement(newPlayerCol, this.player);
-      this.playerPosition = newPosition;
+    if (this.totalMoves >= 100) {
+      this.endGame('Out of moves!!');
+    } else {
+      const playerCol = document.getElementById(`${this.playerPosition}`);
+      const newPlayerCol = document.getElementById(`${newPosition}`);
+      if (newPlayerCol) {
+        newPlayerCol.innerHTML = '';
+        Grid.appendElement(newPlayerCol, this.player);
+        this.playerPosition = newPosition;
+        this.updateMoves();
+      }
+      if (this.boardItems[newPosition].hasFood) {
+        this.updateScore();
+        this.boardItems[newPosition].hasFood = false;
+      }
+      if (playerCol) playerCol.innerHTML = '';
     }
-    if (this.boardItems[newPosition].hasFood) {
-      this.updateScore();
-      this.boardItems[newPosition].hasFood = false;
-    }
-    if (playerCol) playerCol.innerHTML = '';
   }
 
   moveLeft(): void {
@@ -143,6 +158,10 @@ export default class Grid extends Vue {
       const newPosition = this.playerPosition + 1;
       this.move(newPosition);
     }
+  }
+
+  endGame(message: string): void {
+    this.$emit('end:game', { availableFood: this.availableFood, message });
   }
 }
 </script>

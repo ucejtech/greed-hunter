@@ -8,11 +8,20 @@
       </v-col>
       <v-col cols="12" md="5" class="d-flex align-center flex-column">
         <greed />
-        <h1 class="game-title mt-7">Greedy Hunter</h1>
-        <h4 class="game-aim mt-5">
+        <h1 class="game-title mt-7">{{ gameEnded.ended ? 'Game Over' : 'Greedy Hunter' }}</h1>
+        <h4 class="game-aim mt-5" v-if="!gameEnded.ended">
           The aim is to eat all the food in record time Confiure your game grid
           below 👇🏼
         </h4>
+        <div class="game-aim" v-else>
+          <h4>{{ gameEnded.message }}</h4>
+          <h4>
+          Total Food: <strong>{{ gameEnded.score }} / {{ gameEnded.availableFood }}</strong>
+        </h4>
+          <h4>
+          Time Spent: <strong>{{ formattedTime(gameEnded.timeSpent) }}</strong>
+        </h4>
+        </div>
         <form class="mt-7 d-flex flex-column align-center" @submit="(e) => e.preventDefault()">
           <div class="d-flex justify-center">
             <label>Game grid </label>
@@ -31,9 +40,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Mesh from '@/assets/img/abstract/mesh.svg';
 import Greed from '@/assets/img/greed.svg';
+import { secToMinutes } from '@/utils/conversion';
+
+interface GameState {
+    ended: boolean;
+    score: number;
+    timeSpent: number;
+    availableFood: number;
+}
 
 @Component({
   components: {
@@ -41,7 +58,23 @@ import Greed from '@/assets/img/greed.svg';
     Greed,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  @Prop({
+    default: {
+      ended: false,
+      score: 0,
+      timeSpent: 0,
+      availableFood: 0,
+      message: '',
+    },
+  })
+  gameEnded!: GameState
+
+  // eslint-disable-next-line class-methods-use-this
+  formattedTime(sec: number): string {
+    return secToMinutes(sec);
+  }
+}
 </script>
 
 <style scoped>

@@ -3,25 +3,31 @@
     <v-row justify="center" align="center" class="full-height" no-gutters>
       <v-col cols="12" md="5" class="card-parent">
         <v-card class="card px-5">
-          <div class="py-3 title-frame d-flex justify-space-between align-center">
+          <div
+            class="py-3 title-frame d-flex justify-space-between align-center"
+          >
             <div class="grid-indicator">Grid: <strong>10 x 10</strong></div>
             <div class="d-flex align-center">
-              <heart id="heart"/>
+              <heart id="heart" />
               <progress class="ml-n4" max="100" :value="timer" />
             </div>
             <div class="time-counter">
-              Time spent: <strong> 00:48 secs</strong>
+              Time spent: <strong> {{ formattedTime }} s</strong>
             </div>
           </div>
           <div class="game-board">
-            <grid @update:score="score += 1"/>
+            <grid @update:score="score += 1" @update:moves="moves += 1" @end:game="endGame" />
           </div>
-          <div class="py-5 title-frame d-flex justify-space-between align-center">
-            <div class="grid-indicator">Maximum moves: <strong>100</strong></div>
-            <div class="grid-indicator">Score: <strong>{{ score }}</strong></div>
-            <div class="time-counter">
-              Total moves: <strong>12</strong>
+          <div
+            class="py-5 title-frame d-flex justify-space-between align-center"
+          >
+            <div class="grid-indicator">
+              Maximum moves: <strong>100</strong>
             </div>
+            <div class="grid-indicator">
+              Food: <strong>{{ score }}</strong>
+            </div>
+            <div class="time-counter">Total moves: <strong>{{ moves  }}</strong></div>
           </div>
         </v-card>
       </v-col>
@@ -33,6 +39,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Heart from '@/assets/img/abstract/heart.svg';
 import Grid from '../components/grid.vue';
+import { secToMinutes } from '../utils/conversion';
 
 @Component({
   components: {
@@ -43,16 +50,37 @@ import Grid from '../components/grid.vue';
 export default class Game extends Vue {
   timer = 100;
 
-  score = 0
+  timeManager !: number | undefined;
+
+  timeSpent = 0;
+
+  score = 0;
+
+  moves = 0;
+
+  get formattedTime(): string | number {
+    return secToMinutes(this.timeSpent);
+  }
 
   mounted(): void {
     this.increase();
   }
 
   increase(): void {
-    setInterval(() => {
-      this.timer -= 10;
+    this.timeManager = setInterval(() => {
+      // this.timer -= 10;
+      this.timeSpent += 1;
     }, 1000);
+  }
+
+  beforeDestroy(): void {
+    clearInterval(this.timeManager);
+  }
+
+  endGame({ availableFood, message }: { availableFood: number, message: string }): void {
+    this.$emit('end:game', {
+      score: this.score, timeSpent: this.timeSpent, availableFood, message,
+    });
   }
 }
 </script>
