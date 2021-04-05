@@ -1,0 +1,9 @@
+:root {
+    --color-primary: #43144a;
+    --color-secondary: #ffc700;
+    --text-gray: #cbcbff;
+}
+
+.full-height {
+    height: 100%;
+}
