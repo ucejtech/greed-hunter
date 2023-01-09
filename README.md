@@ -2,7 +2,7 @@
 
 ![Deploy to github pages](https://github.com/ucejtech/greedy-hunter/workflows/Deploy%20to%20github%20pages/badge.svg?branch=master)
 
-Hunt for pieces of food by moving your player (Greed) around a board and completing the game in record time.
+Hunt for pieces of food by moving your player: Greed around a board and completing the game in record time.
 
 ## Interface
 Start
